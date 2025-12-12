@@ -57,14 +57,14 @@ public class Robot extends TimedRobot {
   private static final int kDistBtn3 = 3; // 버튼 3: 오른쪽
   private static final int kDistBtn4 = 4; // 버튼 4: 위
 
-  private static final double kDistVal1 = 1.0; // 왼쪽 경사 기둥 거리
+  private static final double kDistVal1 = 0.65; // 왼쪽 경사 기둥 거리
   private static final double kDistVal2 = 1.20; // 왼쪽 수직 기둥 거리
-  private static final double kDistVal3 = 1.10; // 오른쪽 경사 기둥 거리
+  private static final double kDistVal3 = 0.65; // 오른쪽 경사 기둥 거리
   private static final double kDistVal4 = 1.40; // 오른쪽 수직 기둥 거리
 
   // ★ [추가 요청] POV 정밀 제어 속도 상수
-  private static final double kFineSpeed = 0.1;
-  private static final double kFineTurn = 0.07;
+  private static final double kFineSpeed = 0.11;
+  private static final double kFineTurn = 0.12;
 
   // 변수들
   private double leftStickY = 0;
@@ -91,45 +91,41 @@ public class Robot extends TimedRobot {
   private boolean previousInputValue = false;
 
   // -------------------------------------------------------------------------
-  // [물리적 측정값]
+  // [물리적 측정값] - SmartDashboard 수정 가능 변수
   // -------------------------------------------------------------------------
-  private static final double CAMERA_HEIGHT_METERS = 0.4;
-  private static final double TARGET_HEIGHT_METERS = 0.27;
-  private static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-8.57);
+  private double CAMERA_HEIGHT_METERS = 0.4;
+  private double TARGET_HEIGHT_METERS = 0.27;
+  // 각도 값을 대시보드에서 수정하기 위해 Degree 변수 사용
+  private double CAMERA_PITCH_DEGREES = -8.57;
 
   // -------------------------------------------------------------------------
-  // [튜닝 상수] - 최적화 추천 값 적용
+  // [튜닝 상수] - SmartDashboard 수정 가능 변수
   // -------------------------------------------------------------------------
 
   // 오른쪽 모터가 더 느린 것을 보정
-  private static final double RIGHT_MOTOR_CORRECTION = 1.04;
+  private double RIGHT_MOTOR_CORRECTION = 1.04;
 
-  // 목표 지점의 거리 및 yaw 각도를 입력(텔레모드 거리 측정 확인)
-  private static final double TARGET_DISTANCE_METERS = 0.80;
-  private static final double TARGET_YAW_DEGREES_LEFT = 8.71;
-  private static final double TARGET_YAW_DEGREES_RIGHT = -8.71;
-  // private static final double TARGET_ID = 1; // 찾고자 하는 태그 아이디
+  // 목표 지점의 거리 및 yaw 각도를 입력
+  private double TARGET_DISTANCE_METERS = 0.65;
+  private double TARGET_YAW_DEGREES_LEFT = 12.89;
+  private double TARGET_YAW_DEGREES_RIGHT = -19.31;
 
-  // ★ [수정됨] P값 튜닝 (기존 1.2 -> 0.8 / 0.02 -> 0.03)
-  // 너무 빠르면 줄이고(0.6), 너무 느리면 키우세요(1.0)
-  private static final double FORWARD_kP = 1.2;
+  // P값 튜닝
+  private double FORWARD_kP = 1.2;
+  private double TURN_kP = 0.001;
 
-  // 회전이 너무 확확 꺾이면 줄이고(0.02), 너무 굼뜨면 키우세요(0.04)
-  private static final double TURN_kP = 0.001;
+  // 최소 기동 전압
+  private double kMinForwardSpeed = 0.1;
+  private double kMinTurnSpeed = 0.07;
 
-  // ★ 최소 기동 전압 (이 값은 로봇이 바닥에서 간신히 움직일 정도로 설정)
-  private static final double kMinForwardSpeed = 0.1;
-  private static final double kMinTurnSpeed = 0.07;
+  private double DISTANCE_TOLERANCE_METERS = 0.05;
+  private double YAW_TOLERANCE_DEGREES = 1.0;
 
-  private static final double DISTANCE_TOLERANCE_METERS = 0.05;
-  private static final double YAW_TOLERANCE_DEGREES = 0.5;
+  private double MAX_FORWARD_SPEED = 0.20;
+  private double MAX_TURN_SPEED = 0.15;
 
-  private static final double MAX_FORWARD_SPEED = 0.20;
-  private static final double MAX_TURN_SPEED = 0.15;
-
-  // ★ [추가] 안정화 시간 (목표 도달 후 0.5초 유지해야 다음 단계로 이동)
-  // 이 기능이 있어야 도착 후 좌우로 떠는 현상을 막을 수 있습니다.
-  private static final double STABLE_TIME_REQUIRED = 0.05;
+  // 안정화 시간
+  private double STABLE_TIME_REQUIRED = 0.05;
 
   // ========================================================================
   // 자율주행 단계(Phase) 정의
@@ -165,8 +161,8 @@ public class Robot extends TimedRobot {
   }
 
   // 탐색 모드 튜닝 상수
-  private static final double SEARCH_TURN_SPEED = 0.20; // 탐색 시 회전 속도
-  private static final double SEARCH_WAIT_TIME = 1.0; // 타겟 잃은 후 대기 시간 (초)
+  private static final double SEARCH_TURN_SPEED = 0.15; // 탐색 시 회전 속도
+  private static final double SEARCH_WAIT_TIME = 1.5; // 타겟 잃은 후 대기 시간 (초)
   private static final double SEARCH_YAW_TIME = 3.0; // 마지막 방향 탐색 시간 (초)
   private static final double SEARCH_SWEEP_DURATION = 6.0; // 좌우 스캔 지속 시간 (초)
   private static final double TARGET_LOST_TIMEOUT = 8.0; // 탐색 포기 시간 (초)
@@ -192,32 +188,72 @@ public class Robot extends TimedRobot {
     // 2025 REVLib 모터 설정
     SparkMaxConfig config = new SparkMaxConfig();
 
-    // ★ [추가] 전압 보상 활성화 (배터리 전압 변동에 따른 속도 차이 방지)
-    // 모터에 항상 12V 기준으로 전력을 공급하도록 계산합니다.
     config.voltageCompensation(12.0);
-    // ★ [추가] 램프 레이트 설정 (0초 -> 100% 속도까지 걸리는 시간)
-    // 값이 클수록 부드럽게 출발하지만 반응이 느려집니다.
-    // 0.3 ~ 0.5초 정도가 덜컹거림 방지에 적당합니다.
-    config.openLoopRampRate(0.5); // 수동 조작 시 0.5초 동안 서서히 가속
-    config.closedLoopRampRate(0.5); // 자율 주행 시 0.5초 동안 서서히 가속
+    config.openLoopRampRate(0.5);
+    config.closedLoopRampRate(0.5);
 
     leftMotor1.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     leftMotor2.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor1.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor2.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Motor5.configure(config, ResetMode.kResetSafeParameters,
-    // PersistMode.kPersistParameters);
-    // Motor6.configure(config, ResetMode.kResetSafeParameters,
-    // PersistMode.kPersistParameters);
-    // Motor7.configure(config, ResetMode.kResetSafeParameters,
-    // PersistMode.kPersistParameters);
     Motor8.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // ★ [추가 요청] 타겟 ID 필터링 옵션 초기화
-    // -1: 모든 태그 추적 (기본값)
-    // 1 ~ 22: 특정 ID만 추적
     SmartDashboard.putNumber("Target Filter ID", -1);
+
+    // ★ [추가 요청] 튜닝 변수 SmartDashboard 초기화
+    SmartDashboard.putNumber("Cam Height (m)", CAMERA_HEIGHT_METERS);
+    SmartDashboard.putNumber("Target Height (m)", TARGET_HEIGHT_METERS);
+    SmartDashboard.putNumber("Cam Pitch (Deg)", CAMERA_PITCH_DEGREES);
+
+    SmartDashboard.putNumber("Right Motor Corr", RIGHT_MOTOR_CORRECTION);
+
+    SmartDashboard.putNumber("Target Dist (m)", TARGET_DISTANCE_METERS);
+    SmartDashboard.putNumber("Target Yaw Left", TARGET_YAW_DEGREES_LEFT);
+    SmartDashboard.putNumber("Target Yaw Right", TARGET_YAW_DEGREES_RIGHT);
+
+    SmartDashboard.putNumber("Forward kP", FORWARD_kP);
+    SmartDashboard.putNumber("Turn kP", TURN_kP);
+
+    SmartDashboard.putNumber("Min Fwd Speed", kMinForwardSpeed);
+    SmartDashboard.putNumber("Min Turn Speed", kMinTurnSpeed);
+
+    SmartDashboard.putNumber("Dist Tolerance", DISTANCE_TOLERANCE_METERS);
+    SmartDashboard.putNumber("Yaw Tolerance", YAW_TOLERANCE_DEGREES);
+
+    SmartDashboard.putNumber("Max Fwd Speed", MAX_FORWARD_SPEED);
+    SmartDashboard.putNumber("Max Turn Speed", MAX_TURN_SPEED);
+
+    SmartDashboard.putNumber("Stable Time", STABLE_TIME_REQUIRED);
+  }
+
+  // 매 주기마다 대시보드 값 업데이트
+  @Override
+  public void robotPeriodic() {
+    CAMERA_HEIGHT_METERS = SmartDashboard.getNumber("Cam Height (m)", CAMERA_HEIGHT_METERS);
+    TARGET_HEIGHT_METERS = SmartDashboard.getNumber("Target Height (m)", TARGET_HEIGHT_METERS);
+    CAMERA_PITCH_DEGREES = SmartDashboard.getNumber("Cam Pitch (Deg)", CAMERA_PITCH_DEGREES);
+
+    RIGHT_MOTOR_CORRECTION = SmartDashboard.getNumber("Right Motor Corr", RIGHT_MOTOR_CORRECTION);
+
+    TARGET_DISTANCE_METERS = SmartDashboard.getNumber("Target Dist (m)", TARGET_DISTANCE_METERS);
+    TARGET_YAW_DEGREES_LEFT = SmartDashboard.getNumber("Target Yaw Left", TARGET_YAW_DEGREES_LEFT);
+    TARGET_YAW_DEGREES_RIGHT = SmartDashboard.getNumber("Target Yaw Right", TARGET_YAW_DEGREES_RIGHT);
+
+    FORWARD_kP = SmartDashboard.getNumber("Forward kP", FORWARD_kP);
+    TURN_kP = SmartDashboard.getNumber("Turn kP", TURN_kP);
+
+    kMinForwardSpeed = SmartDashboard.getNumber("Min Fwd Speed", kMinForwardSpeed);
+    kMinTurnSpeed = SmartDashboard.getNumber("Min Turn Speed", kMinTurnSpeed);
+
+    DISTANCE_TOLERANCE_METERS = SmartDashboard.getNumber("Dist Tolerance", DISTANCE_TOLERANCE_METERS);
+    YAW_TOLERANCE_DEGREES = SmartDashboard.getNumber("Yaw Tolerance", YAW_TOLERANCE_DEGREES);
+
+    MAX_FORWARD_SPEED = SmartDashboard.getNumber("Max Fwd Speed", MAX_FORWARD_SPEED);
+    MAX_TURN_SPEED = SmartDashboard.getNumber("Max Turn Speed", MAX_TURN_SPEED);
+
+    STABLE_TIME_REQUIRED = SmartDashboard.getNumber("Stable Time", STABLE_TIME_REQUIRED);
   }
 
   @Override
@@ -328,7 +364,7 @@ public class Robot extends TimedRobot {
         acquisitionTimer += 0.02; // 타이머 증가
 
         // 0.5초 동안 멈춰서 관성을 죽이고 타겟 인식을 확실히 함
-        if (acquisitionTimer < 0.5) {
+        if (acquisitionTimer < 1) {
           System.out.println("Target Acquired! Stabilizing...");
           runDriveMotors(0, 0);
           return; // 여기서 리턴하여 PID 실행 안 함
@@ -347,7 +383,8 @@ public class Robot extends TimedRobot {
       lastKnownYaw = yaw;
 
       double distance = PhotonUtils.calculateDistanceToTargetMeters(
-          CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS, CAMERA_PITCH_RADIANS, Units.degreesToRadians(pitch));
+          CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS, Units.degreesToRadians(CAMERA_PITCH_DEGREES),
+          Units.degreesToRadians(pitch));
 
       // [수정] 거리 측정값이 음수(-)일 경우 예외 처리
       // 수학적 특이점으로 인해 음수가 나오면, 아직 멀리 있는 것으로 간주하여
@@ -535,19 +572,19 @@ public class Robot extends TimedRobot {
     if (pov2 != -1) {
 
       if (pov2 == 0) {
-        Motor5Speed = 0.5;
+        Motor5Speed = -0.5;
       }
       if (pov2 == 180) {
-        Motor5Speed = -0.5;
+        Motor5Speed = 0.5;
       }
       if (pov2 == 90 || pov2 == 270) {
         Motor6Speed = -0.5;
       }
     }
     if (btn2F)
-      Motor7Speed = -1.0;
+      Motor7Speed = 0.5;
     if (btn2B)
-      Motor7Speed = 0.3;
+      Motor7Speed = -0.3;
     if (btn2L)
       Motor8Speed = -0.3;
     if (btn2R)
@@ -591,7 +628,8 @@ public class Robot extends TimedRobot {
       double pitch = target.getPitch();
       targetID = target.getFiducialId();
       currentDistance = PhotonUtils.calculateDistanceToTargetMeters(
-          CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS, CAMERA_PITCH_RADIANS, Units.degreesToRadians(pitch));
+          CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS, Units.degreesToRadians(CAMERA_PITCH_DEGREES),
+          Units.degreesToRadians(pitch));
 
       if (currentDistance < 0) {
         currentDistance = TARGET_DISTANCE_METERS + 1.0;
@@ -717,21 +755,24 @@ public class Robot extends TimedRobot {
         turn = 0;
 
         // 전진 (0, 45, 315)
-        if (pov == 0 || pov == 45 || pov == 315) {
-          speed = kFineSpeed;
+        if (pov == 180) {
+          // speed = kFineSpeed;
+          turn = kFineTurn;
         }
         // 후진 (180, 135, 225)
-        else if (pov == 180 || pov == 135 || pov == 225) {
-          speed = -kFineSpeed;
+        else if (pov == 0) {
+          // speed = -kFineSpeed;
+          turn = -kFineTurn;
         }
 
         // 우회전 (90, 45, 135) -> Turn값 음수
-        if (pov == 90 || pov == 45 || pov == 135) {
-          turn = -kFineTurn;
+        if (pov == 270) {
+          speed = -kFineSpeed;
         }
         // 좌회전 (270, 225, 315) -> Turn값 양수
-        else if (pov == 270 || pov == 225 || pov == 315) {
-          turn = kFineTurn;
+        else if (pov == 90) {
+          speed = kFineSpeed;
+
         }
 
         SmartDashboard.putString("DriveMode", "Manual (POV)");
@@ -775,10 +816,6 @@ public class Robot extends TimedRobot {
         previousInputValue = currentInputValue;
       }
     }
-  }
-
-  @Override
-  public void robotPeriodic() {
   }
 
   @Override
