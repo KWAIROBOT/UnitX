@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   // ★ [수정] 카메라 2개 선언 (Main, Sub)
   // PhotonVision 대시보드에서 설정한 카메라 이름과 똑같이 적어야 합니다.
   PhotonCamera camera = new PhotonCamera("FHD_Webcam");
-  PhotonCamera camera2 = new PhotonCamera("Sub_Webcam"); 
+  PhotonCamera camera2 = new PhotonCamera("USB_CAMERA"); 
 
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -97,14 +97,14 @@ public class Robot extends TimedRobot {
   private double CAMERA_HEIGHT_METERS = 0.4;
   private double TARGET_HEIGHT_METERS = 0.27;
   // 각도 값을 대시보드에서 수정하기 위해 Degree 변수 사용
-  private double CAMERA_PITCH_DEGREES = -8.57; 
+  private double CAMERA_PITCH_DEGREES = -8.67; 
 
   // ★ [추가] 2번 카메라용 물리적 측정값 및 오프셋
-  private double CAMERA2_HEIGHT_METERS = 0.4;
-  private double CAMERA2_PITCH_DEGREES = -8.57;
+  private double CAMERA2_HEIGHT_METERS = 0.63;
+  private double CAMERA2_PITCH_DEGREES = -22.33;
   // 카메라 2가 로봇 중심에서 오른쪽으로 얼마나 떨어져 있는지 (미터 단위)
-  // 예: 오른쪽으로 20cm 떨어져 있으면 0.2, 왼쪽이면 -0.2
-  private double CAMERA2_LATERAL_OFFSET_METERS = 0.20; 
+  // 예: 오른쪽으로 22.5cm 떨어져 있으면 0.225, 왼쪽이면 -0.225
+  private double CAMERA2_LATERAL_OFFSET_METERS = 0.225; 
 
   // -------------------------------------------------------------------------
   // [튜닝 상수] - SmartDashboard 수정 가능 변수
@@ -114,12 +114,12 @@ public class Robot extends TimedRobot {
   private double RIGHT_MOTOR_CORRECTION = 1.04;
 
   // 목표 지점의 거리 및 yaw 각도를 입력
-  private double TARGET_DISTANCE_METERS = 0.65;
-  private double TARGET_YAW_DEGREES_LEFT = 12.89;
+  private double TARGET_DISTANCE_METERS = 0.71;
+  private double TARGET_YAW_DEGREES_LEFT = 14.16;
   private double TARGET_YAW_DEGREES_RIGHT = -19.31;
 
   // P값 튜닝
-  private double FORWARD_kP = 1.2;
+  private double FORWARD_kP = 1.4;
   private double TURN_kP = 0.001;
 
   // 최소 기동 전압
@@ -129,11 +129,11 @@ public class Robot extends TimedRobot {
   private double DISTANCE_TOLERANCE_METERS = 0.05;
   private double YAW_TOLERANCE_DEGREES = 1.0;
 
-  private double MAX_FORWARD_SPEED = 0.20;
-  private double MAX_TURN_SPEED = 0.15;
+  private double MAX_FORWARD_SPEED = 0.10;
+  private double MAX_TURN_SPEED = 0.10;
 
   // 안정화 시간
-  private double STABLE_TIME_REQUIRED = 0.05;
+  private double STABLE_TIME_REQUIRED = 0.01;
 
   // ========================================================================
   // 자율주행 단계(Phase) 정의
