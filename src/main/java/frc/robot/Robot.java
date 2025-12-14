@@ -1,3 +1,4 @@
+// 2025 SSRC 3Team UNIT X
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -29,7 +30,7 @@ public class Robot extends TimedRobot {
   // ★ [수정] 카메라 2개 선언 (Main, Sub)
   // PhotonVision 대시보드에서 설정한 카메라 이름과 똑같이 적어야 합니다.
   PhotonCamera camera = new PhotonCamera("FHD_Webcam");
-  PhotonCamera camera2 = new PhotonCamera("USB_CAMERA"); 
+  PhotonCamera camera2 = new PhotonCamera("USB_CAMERA");
 
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -97,14 +98,14 @@ public class Robot extends TimedRobot {
   private double CAMERA_HEIGHT_METERS = 0.4;
   private double TARGET_HEIGHT_METERS = 0.27;
   // 각도 값을 대시보드에서 수정하기 위해 Degree 변수 사용
-  private double CAMERA_PITCH_DEGREES = -8.67; 
+  private double CAMERA_PITCH_DEGREES = -8.67;
 
   // ★ [추가] 2번 카메라용 물리적 측정값 및 오프셋
   private double CAMERA2_HEIGHT_METERS = 0.63;
   private double CAMERA2_PITCH_DEGREES = -22.33;
   // 카메라 2가 로봇 중심에서 오른쪽으로 얼마나 떨어져 있는지 (미터 단위)
   // 예: 오른쪽으로 22.5cm 떨어져 있으면 0.225, 왼쪽이면 -0.225
-  private double CAMERA2_LATERAL_OFFSET_METERS = 0.225; 
+  private double CAMERA2_LATERAL_OFFSET_METERS = 0.225;
 
   // -------------------------------------------------------------------------
   // [튜닝 상수] - SmartDashboard 수정 가능 변수
@@ -197,8 +198,8 @@ public class Robot extends TimedRobot {
     SparkMaxConfig config = new SparkMaxConfig();
 
     config.voltageCompensation(12.0);
-    config.openLoopRampRate(0.5); 
-    config.closedLoopRampRate(0.5); 
+    config.openLoopRampRate(0.5);
+    config.closedLoopRampRate(0.5);
 
     leftMotor1.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     leftMotor2.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -214,30 +215,30 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Cam Height (m)", CAMERA_HEIGHT_METERS);
     SmartDashboard.putNumber("Target Height (m)", TARGET_HEIGHT_METERS);
     SmartDashboard.putNumber("Cam Pitch (Deg)", CAMERA_PITCH_DEGREES);
-    
+
     // ★ [추가] 2번 카메라용 대시보드 변수
     SmartDashboard.putNumber("Cam2 Height (m)", CAMERA2_HEIGHT_METERS);
     SmartDashboard.putNumber("Cam2 Pitch (Deg)", CAMERA2_PITCH_DEGREES);
     SmartDashboard.putNumber("Cam2 Offset (m)", CAMERA2_LATERAL_OFFSET_METERS);
 
     SmartDashboard.putNumber("Right Motor Corr", RIGHT_MOTOR_CORRECTION);
-    
+
     SmartDashboard.putNumber("Target Dist (m)", TARGET_DISTANCE_METERS);
     SmartDashboard.putNumber("Target Yaw Left", TARGET_YAW_DEGREES_LEFT);
     SmartDashboard.putNumber("Target Yaw Right", TARGET_YAW_DEGREES_RIGHT);
-    
+
     SmartDashboard.putNumber("Forward kP", FORWARD_kP);
     SmartDashboard.putNumber("Turn kP", TURN_kP);
-    
+
     SmartDashboard.putNumber("Min Fwd Speed", kMinForwardSpeed);
     SmartDashboard.putNumber("Min Turn Speed", kMinTurnSpeed);
-    
+
     SmartDashboard.putNumber("Dist Tolerance", DISTANCE_TOLERANCE_METERS);
     SmartDashboard.putNumber("Yaw Tolerance", YAW_TOLERANCE_DEGREES);
-    
+
     SmartDashboard.putNumber("Max Fwd Speed", MAX_FORWARD_SPEED);
     SmartDashboard.putNumber("Max Turn Speed", MAX_TURN_SPEED);
-    
+
     SmartDashboard.putNumber("Stable Time", STABLE_TIME_REQUIRED);
   }
 
@@ -247,30 +248,30 @@ public class Robot extends TimedRobot {
     CAMERA_HEIGHT_METERS = SmartDashboard.getNumber("Cam Height (m)", CAMERA_HEIGHT_METERS);
     TARGET_HEIGHT_METERS = SmartDashboard.getNumber("Target Height (m)", TARGET_HEIGHT_METERS);
     CAMERA_PITCH_DEGREES = SmartDashboard.getNumber("Cam Pitch (Deg)", CAMERA_PITCH_DEGREES);
-    
+
     // 2번 카메라 설정값 업데이트
     CAMERA2_HEIGHT_METERS = SmartDashboard.getNumber("Cam2 Height (m)", CAMERA2_HEIGHT_METERS);
     CAMERA2_PITCH_DEGREES = SmartDashboard.getNumber("Cam2 Pitch (Deg)", CAMERA2_PITCH_DEGREES);
     CAMERA2_LATERAL_OFFSET_METERS = SmartDashboard.getNumber("Cam2 Offset (m)", CAMERA2_LATERAL_OFFSET_METERS);
 
     RIGHT_MOTOR_CORRECTION = SmartDashboard.getNumber("Right Motor Corr", RIGHT_MOTOR_CORRECTION);
-    
+
     TARGET_DISTANCE_METERS = SmartDashboard.getNumber("Target Dist (m)", TARGET_DISTANCE_METERS);
     TARGET_YAW_DEGREES_LEFT = SmartDashboard.getNumber("Target Yaw Left", TARGET_YAW_DEGREES_LEFT);
     TARGET_YAW_DEGREES_RIGHT = SmartDashboard.getNumber("Target Yaw Right", TARGET_YAW_DEGREES_RIGHT);
-    
+
     FORWARD_kP = SmartDashboard.getNumber("Forward kP", FORWARD_kP);
     TURN_kP = SmartDashboard.getNumber("Turn kP", TURN_kP);
-    
+
     kMinForwardSpeed = SmartDashboard.getNumber("Min Fwd Speed", kMinForwardSpeed);
     kMinTurnSpeed = SmartDashboard.getNumber("Min Turn Speed", kMinTurnSpeed);
-    
+
     DISTANCE_TOLERANCE_METERS = SmartDashboard.getNumber("Dist Tolerance", DISTANCE_TOLERANCE_METERS);
     YAW_TOLERANCE_DEGREES = SmartDashboard.getNumber("Yaw Tolerance", YAW_TOLERANCE_DEGREES);
-    
+
     MAX_FORWARD_SPEED = SmartDashboard.getNumber("Max Fwd Speed", MAX_FORWARD_SPEED);
     MAX_TURN_SPEED = SmartDashboard.getNumber("Max Turn Speed", MAX_TURN_SPEED);
-    
+
     STABLE_TIME_REQUIRED = SmartDashboard.getNumber("Stable Time", STABLE_TIME_REQUIRED);
   }
 
@@ -351,7 +352,7 @@ public class Robot extends TimedRobot {
     PhotonPipelineResult result1 = camera.getLatestResult();
     // 2. 카메라 2 결과 확인
     PhotonPipelineResult result2 = camera2.getLatestResult();
-    
+
     PhotonTrackedTarget target = null;
     boolean useCamera2 = false; // 현재 사용중인 카메라가 2번인지 여부
 
@@ -361,7 +362,7 @@ public class Robot extends TimedRobot {
     // ----------------------------------------
     // 카메라 선택 로직: Main -> Sub 순서로 탐색
     // ----------------------------------------
-    
+
     // (1) Main Camera 검사
     if (result1.hasTargets()) {
       if (filterId == -1) {
@@ -369,7 +370,8 @@ public class Robot extends TimedRobot {
       } else {
         for (PhotonTrackedTarget t : result1.getTargets()) {
           if (t.getFiducialId() == (int) filterId) {
-            target = t; break;
+            target = t;
+            break;
           }
         }
       }
@@ -377,13 +379,13 @@ public class Robot extends TimedRobot {
 
     // (2) Main에 타겟이 없고, Sub Camera 검사
     if (target == null && result2.hasTargets()) {
-       if (filterId == -1) {
+      if (filterId == -1) {
         target = result2.getBestTarget();
         useCamera2 = true;
       } else {
         for (PhotonTrackedTarget t : result2.getTargets()) {
           if (t.getFiducialId() == (int) filterId) {
-            target = t; 
+            target = t;
             useCamera2 = true;
             break;
           }
@@ -418,13 +420,14 @@ public class Robot extends TimedRobot {
       // --- 정상 추적 (PID 제어) ---
       double yaw = target.getYaw();
       double pitch = target.getPitch();
-      
+
       // ★ 사용된 카메라에 따라 거리 계산 파라미터 자동 선택
       double currentCamHeight = useCamera2 ? CAMERA2_HEIGHT_METERS : CAMERA_HEIGHT_METERS;
       double currentCamPitch = useCamera2 ? CAMERA2_PITCH_DEGREES : CAMERA_PITCH_DEGREES;
 
       double distance = PhotonUtils.calculateDistanceToTargetMeters(
-          currentCamHeight, TARGET_HEIGHT_METERS, Units.degreesToRadians(currentCamPitch), Units.degreesToRadians(pitch));
+          currentCamHeight, TARGET_HEIGHT_METERS, Units.degreesToRadians(currentCamPitch),
+          Units.degreesToRadians(pitch));
 
       // [수정] 거리 측정값이 음수(-)일 경우 예외 처리
       if (distance < 0) {
@@ -438,7 +441,7 @@ public class Robot extends TimedRobot {
         double offsetCorrection = Units.radiansToDegrees(Math.atan(CAMERA2_LATERAL_OFFSET_METERS / distance));
         yaw -= offsetCorrection;
       }
-      
+
       lastKnownYaw = yaw; // 보정된 Yaw를 저장해야 탐색 시 유리함
 
       double distError = distance - TARGET_DISTANCE_METERS;
@@ -652,13 +655,13 @@ public class Robot extends TimedRobot {
     // ----------------------------------------
     PhotonPipelineResult result1 = camera.getLatestResult();
     PhotonPipelineResult result2 = camera2.getLatestResult();
-    
+
     PhotonTrackedTarget target = null;
     boolean useCamera2 = false;
 
     // Filter ID 적용
     double filterId = SmartDashboard.getNumber("Target Filter ID", -1);
-    
+
     // (1) Check Main Camera
     if (result1.hasTargets()) {
       if (filterId == -1) {
@@ -666,28 +669,29 @@ public class Robot extends TimedRobot {
       } else {
         for (PhotonTrackedTarget t : result1.getTargets()) {
           if (t.getFiducialId() == (int) filterId) {
-            target = t; break;
+            target = t;
+            break;
           }
         }
       }
     }
-    
+
     // (2) Check Sub Camera if Main failed
     if (target == null && result2.hasTargets()) {
-       if (filterId == -1) {
+      if (filterId == -1) {
         target = result2.getBestTarget();
         useCamera2 = true;
       } else {
         for (PhotonTrackedTarget t : result2.getTargets()) {
           if (t.getFiducialId() == (int) filterId) {
-            target = t; 
+            target = t;
             useCamera2 = true;
             break;
           }
         }
       }
     }
-    
+
     boolean hasTarget = (target != null);
 
     // 거리/Yaw 계산
@@ -699,12 +703,13 @@ public class Robot extends TimedRobot {
       currentYaw = target.getYaw();
       double pitch = target.getPitch();
       targetID = target.getFiducialId();
-      
+
       double currentCamHeight = useCamera2 ? CAMERA2_HEIGHT_METERS : CAMERA_HEIGHT_METERS;
       double currentCamPitch = useCamera2 ? CAMERA2_PITCH_DEGREES : CAMERA_PITCH_DEGREES;
 
       currentDistance = PhotonUtils.calculateDistanceToTargetMeters(
-          currentCamHeight, TARGET_HEIGHT_METERS, Units.degreesToRadians(currentCamPitch), Units.degreesToRadians(pitch));
+          currentCamHeight, TARGET_HEIGHT_METERS, Units.degreesToRadians(currentCamPitch),
+          Units.degreesToRadians(pitch));
 
       if (currentDistance < 0) {
         currentDistance = TARGET_DISTANCE_METERS + 1.0;
@@ -886,7 +891,8 @@ public class Robot extends TimedRobot {
       }
       // 로그 출력 (사용중인 카메라 표시)
       System.out.printf("[%s] Mode:%s | Cam:%s | Dist:%.2f | Yaw:%.2f | ID:%.0f\n",
-          searchState, (isAutoDistanceMode ? "AUTO-DIST" : "MANUAL"), (useCamera2 ? "SUB" : "MAIN"), currentDistance, currentYaw, targetID);
+          searchState, (isAutoDistanceMode ? "AUTO-DIST" : "MANUAL"), (useCamera2 ? "SUB" : "MAIN"), currentDistance,
+          currentYaw, targetID);
     }
 
     if (digitalInput_0 != null) {
@@ -937,7 +943,7 @@ public class Robot extends TimedRobot {
       double calcCamPitchRad = totalAngleRad - targetPitchRad;
       double calcCamPitchDeg = Units.radiansToDegrees(calcCamPitchRad);
 
-      System.out.printf("[CAM 1] Current Target Pitch: %.2f | >>> REQUIRED PITCH: %.2f (Update SmartDashboard!)\n", 
+      System.out.printf("[CAM 1] Current Target Pitch: %.2f | >>> REQUIRED PITCH: %.2f (Update SmartDashboard!)\n",
           targetPitchDeg, calcCamPitchDeg);
     }
 
@@ -955,7 +961,7 @@ public class Robot extends TimedRobot {
       double calcCamPitchRad = totalAngleRad - targetPitchRad;
       double calcCamPitchDeg = Units.radiansToDegrees(calcCamPitchRad);
 
-      System.out.printf("[CAM 2] Current Target Pitch: %.2f | >>> REQUIRED PITCH: %.2f (Update SmartDashboard!)\n", 
+      System.out.printf("[CAM 2] Current Target Pitch: %.2f | >>> REQUIRED PITCH: %.2f (Update SmartDashboard!)\n",
           targetPitchDeg, calcCamPitchDeg);
     }
   }
