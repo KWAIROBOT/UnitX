@@ -43,9 +43,9 @@ public class Robot extends TimedRobot {
   private SparkMax rightMotor2 = new SparkMax(4, MotorType.kBrushed);
 
   private SparkMax Motor5 = new SparkMax(5, MotorType.kBrushed);
-  private SparkMax Motor6 = new SparkMax(6, MotorType.kBrushed);
-  private SparkMax Motor7 = new SparkMax(7, MotorType.kBrushed);
-  private SparkMax Motor8 = new SparkMax(8, MotorType.kBrushed);
+  private SparkMax Motor6 = new SparkMax(8, MotorType.kBrushed); // 6-> 8
+  private SparkMax Motor7 = new SparkMax(6, MotorType.kBrushed); // 7-> 6
+  private SparkMax Motor8 = new SparkMax(7, MotorType.kBrushed); // 8-> 7
 
   private Joystick joystick01 = new Joystick(0);
   private Joystick joystick02 = new Joystick(1);
@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
   private double CAMERA_HEIGHT_METERS = 0.4;
   private double TARGET_HEIGHT_METERS = 0.27;
   // 각도 값을 대시보드에서 수정하기 위해 Degree 변수 사용
-  private double CAMERA_PITCH_DEGREES = -8.67;
+  private double CAMERA_PITCH_DEGREES = -11.29;
 
   // ★ [추가] 2번 카메라용 물리적 측정값 및 오프셋
   private double CAMERA2_HEIGHT_METERS = 0.63;
@@ -112,22 +112,22 @@ public class Robot extends TimedRobot {
   // -------------------------------------------------------------------------
 
   // 오른쪽 모터가 더 느린 것을 보정
-  private double RIGHT_MOTOR_CORRECTION = 1.04;
+  private double RIGHT_MOTOR_CORRECTION = 1.0005;
 
   // 목표 지점의 거리 및 yaw 각도를 입력
-  private double TARGET_DISTANCE_METERS = 0.71;
-  private double TARGET_YAW_DEGREES_LEFT = 14.16;
-  private double TARGET_YAW_DEGREES_RIGHT = -19.31;
+  private double TARGET_DISTANCE_METERS = 0.825;
+  private double TARGET_YAW_DEGREES_LEFT = 11.44;
+  private double TARGET_YAW_DEGREES_RIGHT = -21.22;
 
   // P값 튜닝
   private double FORWARD_kP = 1.4;
-  private double TURN_kP = 0.001;
+  private double TURN_kP = 0.002;
 
   // 최소 기동 전압
   private double kMinForwardSpeed = 0.1;
-  private double kMinTurnSpeed = 0.07;
+  private double kMinTurnSpeed = 0.09;
 
-  private double DISTANCE_TOLERANCE_METERS = 0.05;
+  private double DISTANCE_TOLERANCE_METERS = 0.02;
   private double YAW_TOLERANCE_DEGREES = 1.0;
 
   private double MAX_FORWARD_SPEED = 0.10;
@@ -304,10 +304,10 @@ public class Robot extends TimedRobot {
       // 1단계: 블라인드 무브 (초기 2초)
       // ----------------------------------------------------------
       case BLIND_MOVE:
-        if (timer.get() < 4.5) {
+        if (timer.get() < 5) {
           // 사용자 코드 기준: 0.0 (정지 상태로 대기)
           // 만약 전진이 필요하면 0.1 등으로 수정하세요.
-          runDriveMotors(0.28, 0.0035);
+          runDriveMotors(0.19, 0);
           Motor5.set(-1.0);
           System.out.println("PHASE: BLIND MOVE (Waiting...)");
         } else {
@@ -593,9 +593,9 @@ public class Robot extends TimedRobot {
     rightStickX2 = joystick02.getRawAxis(2);
     rightStickY2 = joystick02.getRawAxis(5);
     int pov2 = joystick02.getPOV();
-    boolean btn2L = joystick02.getRawButton(1);
+    boolean btn2L = joystick02.getRawButton(7);
     boolean btn2B = joystick02.getRawButton(2);
-    boolean btn2R = joystick02.getRawButton(3);
+    boolean btn2R = joystick02.getRawButton(8);
     boolean btn2F = joystick02.getRawButton(4);
 
     if (Math.abs(leftStickX2) < 0.3)
@@ -604,7 +604,7 @@ public class Robot extends TimedRobot {
       leftStickY2 = 0;
     if (Math.abs(rightStickX2) < 0.3)
       rightStickX2 = 0;
-    if (Math.abs(rightStickY2) < 0.3)
+    if (Math.abs(rightStickY2) < 0.5)
       rightStickY2 = 0;
 
     Motor5Speed = leftStickY2 * 1.0;
@@ -618,7 +618,7 @@ public class Robot extends TimedRobot {
     else
       Motor7Speed = -rightStickY2 * 0.3;
 
-    Motor8Speed = rightStickX2 * 0.3;
+    Motor8Speed = rightStickX2 * 0.5;
 
     if (pov2 != -1) {
 
@@ -639,7 +639,7 @@ public class Robot extends TimedRobot {
     if (btn2L)
       Motor8Speed = -0.3;
     if (btn2R)
-      Motor8Speed = 0.3;
+      Motor8Speed = 0.5;
 
     Motor5.set(Motor5Speed);
     Motor6.set(Motor6Speed);
@@ -827,11 +827,11 @@ public class Robot extends TimedRobot {
 
     } else {
       // 3-3. Manual Control
-      double rawSpeed = (Math.abs(leftStickY) < 0.05) ? 0 : leftStickY;
-      double rawTurn = (Math.abs(rightStickX) < 0.05) ? 0 : rightStickX;
+      double rawSpeed = (Math.abs(leftStickY) < 0.01) ? 0 : leftStickY;
+      double rawTurn = (Math.abs(rightStickX) < 0.01) ? 0 : rightStickX;
 
-      speed = Math.copySign(rawSpeed * rawSpeed, rawSpeed) * 0.7;
-      turn = Math.copySign(rawTurn * rawTurn, rawTurn) * 0.7;
+      speed = Math.copySign(rawSpeed, rawSpeed) * 0.7;
+      turn = Math.copySign(rawTurn, rawTurn) * 0.7;
       // ★ [추가] POV(D-pad) 정밀 제어 오버라이드
       // POV 버튼을 누르면 기존 아날로그 스틱 값을 무시하고 정밀 속도로 덮어씁니다.
       int pov = joystick01.getPOV();
