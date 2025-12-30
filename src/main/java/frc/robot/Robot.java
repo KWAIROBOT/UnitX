@@ -1,4 +1,3 @@
-// 2025 SSRC 3Team UNIT X
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -116,7 +115,7 @@ public class Robot extends TimedRobot {
 
   // 목표 지점의 거리 및 yaw 각도를 입력
   private double TARGET_DISTANCE_METERS = 0.825;
-  private double TARGET_YAW_DEGREES_LEFT = 11.44;
+  private double TARGET_YAW_DEGREES_LEFT = 13.44;
   private double TARGET_YAW_DEGREES_RIGHT = -21.22;
 
   // P값 튜닝
@@ -304,7 +303,7 @@ public class Robot extends TimedRobot {
       // 1단계: 블라인드 무브 (초기 2초)
       // ----------------------------------------------------------
       case BLIND_MOVE:
-        if (timer.get() < 5) {
+        if (timer.get() < 4.5) {
           // 사용자 코드 기준: 0.0 (정지 상태로 대기)
           // 만약 전진이 필요하면 0.1 등으로 수정하세요.
           runDriveMotors(0.19, 0);
@@ -604,7 +603,7 @@ public class Robot extends TimedRobot {
       leftStickY2 = 0;
     if (Math.abs(rightStickX2) < 0.3)
       rightStickX2 = 0;
-    if (Math.abs(rightStickY2) < 0.5)
+    if (Math.abs(rightStickY2) < 0.9)
       rightStickY2 = 0;
 
     Motor5Speed = leftStickY2 * 1.0;
